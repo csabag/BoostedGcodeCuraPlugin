@@ -59,6 +59,36 @@ class BoostedGcode(Script):
 	      "minimum_value_warning": "0.1",
 	      "maximum_value_warning": "2"
 	    },
+      "retraction_distance":
+      {
+      "label": "Retraction distance",
+      "description": "Retraction distance in mm",
+        "unit": "mm",
+        "type": "float",
+        "default_value": 4.5,
+        "minimum_value": "0",
+        "maximum_value_warning": "30"
+      },
+      "layer_height":
+      {
+        "label": "Layer height",
+        "description": "Layer height",
+        "unit": "mm",
+        "type": "float",
+        "default_value": 0.1,
+        "minimum_value": "0.01",
+        "maximum_value_warning": "30.0"
+      },
+      "z_merge_number":
+      {
+        "label": "Z-Merge number",
+        "description": "How many layers of infill are z-merged",
+        "unit": "",
+        "type": "int",
+        "default_value": 4,
+        "minimum_value": "0",
+        "maximum_value_warning": "30"
+      },
 	    "boosted_gcode_cloud_func_url":
 	    {
 	      "label": "Cloud function URL",
@@ -82,8 +112,11 @@ class BoostedGcode(Script):
     headers = {}
     headers['Content-type'] = 'application/json'
     values = {}
-    values['AC'] = str(self.getSettingValueByKey('activation_code'))
-    # Logger.log("d", "Activation code is: %s" % values['AC'])
+    values['activation_code'] = str(self.getSettingValueByKey('activation_code'))
+    values['nozzle_size'] = str(self.getSettingValueByKey('nozzle_size'))
+    values['retraction_distance'] = str(self.getSettingValueByKey('retraction_distance'))
+    values['layer_height'] = str(self.getSettingValueByKey('layer_height'))
+    values['z_merge_number'] = str(self.getSettingValueByKey('z_merge_number'))
 
     Logger.log("d", "Number of lines to be uploaded: %s" % len(data))
     values['content'] = gcode
@@ -104,7 +137,6 @@ class BoostedGcode(Script):
     new_gcode = []
     for l in modified_content:
       new_gcode += l.decode('ascii')
-    #modified_content = modified_content.decode('ascii')
     Logger.log("d", "Decoding complete.")
 
     Logger.log("d", "Content read complete. Number of lines received: %d" % len(modified_content))
